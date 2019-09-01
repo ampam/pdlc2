@@ -1,0 +1,8 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/Hierarchy/PsiConfigurationSettingsKey/CustomLocation/@EntryValue">C:\Users\am\AppData\Local\JetBrains\Transient\ReSharperPlatformVs14\v09\SolutionCaches</s:String>
+	<s:Boolean x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=8FEB9E648ED338469AFF72B7FCE20C1F/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=8FEB9E648ED338469AFF72B7FCE20C1F/AbsolutePath/@EntryValue">C:\wamp\www\plusamedia.dev\cpp\resharper-settings-9-14-2017.DotSettings</s:String>
+	<s:String x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=8FEB9E648ED338469AFF72B7FCE20C1F/RelativePath/@EntryValue">..\..\resharper-settings-9-14-2017.DotSettings</s:String>
+	<s:Boolean x:Key="/Default/Environment/InjectedLayers/InjectedLayerCustomization/=File8FEB9E648ED338469AFF72B7FCE20C1F/@KeyIndexDefined">True</s:Boolean>
+	<s:Double x:Key="/Default/Environment/InjectedLayers/InjectedLayerCustomization/=File8FEB9E648ED338469AFF72B7FCE20C1F/RelativePriority/@EntryValue">1</s:Double>
+	<s:Boolean x:Key="/Default/Housekeeping/VsActionManager/IsShortcutBrowserEnabled/@EntryValue">True</s:Boolean></wpf:ResourceDictionary>
