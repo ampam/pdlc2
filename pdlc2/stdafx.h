@@ -7,9 +7,9 @@
 
 #include "targetver.h"
 
-#include <stdio.h>
+#include <cstdio>
 #include <tchar.h>
-#include <windows.h>
+// #include <windows.h>
 
 //#define BOOST_SPIRIT_DEBUG
 #include <boost/config/warning_disable.hpp>
@@ -57,7 +57,6 @@
 
 /* microsoftr casablanca*/
 #include <cpprest\json.h>
-
 
 
 // TODO: reference additional headers your program requires here

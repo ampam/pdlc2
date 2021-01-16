@@ -30,8 +30,14 @@ public:
 
     static std::string to_string( std::wstring const& value )
     {
-        std::string result;
-        result.assign( value.begin(), value.end() );
+        // std::string result;
+        // result.assign( value.begin(), value.end() );
+
+        using convert_type = std::codecvt_utf8<wchar_t>;
+        std::wstring_convert<convert_type, wchar_t> converter;
+
+        std::string result = converter.to_bytes( value );
+    	
         return result;
     }
 

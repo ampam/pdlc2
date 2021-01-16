@@ -87,6 +87,7 @@ private:
 	std::string _fullParentClass;
 	std::string _classInNamespace;
     bool _generateAsObject;
+    std::string _variableDeclarationKeyword;
 
     std::string generateJsDocClass( ast::ClassNode const& classNode ) const;
 

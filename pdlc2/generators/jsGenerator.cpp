@@ -23,6 +23,8 @@ JsGenerator::JsGenerator( PdlConfig const& config ) :
     _fileExt = ".js";
     _classTemplate += _fileExt;
     _generateAsObject = PdlConfig::as_bool( _languageConfig, "generateAsObject" );
+    _variableDeclarationKeyword = PdlConfig::as_bool( _languageConfig, "useLet" ) ? "let" : "var";
+
 
     //	_formatter.attr =
     //		"{\n" +
@@ -118,14 +120,10 @@ string JsGenerator::doUsingList( UsingList const& astNode )
     return result;
 }
 
-/**
- * \brief
- * \param classAstNode
- * \return string
- */
+
 string JsGenerator::doParentClass( ClassNode const& classAstNode )
 {
-    string result = "";
+	string result = "";
     //	if ( classAstNode.parentClass )
     //	{
     //		auto parentClass = classAstNode.symbol->getParentClass();
@@ -254,7 +252,7 @@ string JsGenerator::doClass( NamespaceNode const& astNamespace, ClassNode const&
 
     if ( !_propertyAttributes.empty() )
     {
-        _propertyAttributes.insert( _propertyAttributes.begin(), "var propertyAttributes = {};" );
+        _propertyAttributes.insert( _propertyAttributes.begin(), _variableDeclarationKeyword + " propertyAttributes = {};" );
         const auto assignAttributes = ( boost::format( "%1%.__propertyAttributes = propertyAttributes;" )
             % _classInNamespace ).str();
 

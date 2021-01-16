@@ -31,9 +31,9 @@ namespace pam { namespace pdl
             if ( errorPosition != last )
             {
                 //c:\wamp\www\plusamedia.dev\cpp\pdlc2\pdlc2\generators\as3generator.cpp(66): error C2065: 'asdasd' : undeclared identifier
-                int lineOffset = errorPosition - lineStart + 1;
+                auto lineOffset = errorPosition - lineStart + 1;
 
-                auto visuaStudioError =  boost::format( std::string( "%1%(%2%,%3%): error: %4% %5%" ) )
+                auto visualStudioError =  boost::format( std::string( "%1%(%2%,%3%): error: %4% %5%" ) ) 
                     % std::string( _fileName )
                     //% boost::lexical_cast<std::string>(line)
                     % std::to_string( line )
@@ -43,7 +43,7 @@ namespace pam { namespace pdl
                     % what;
 
                 //std::cout << visuaStudioError.str() << std::endl;
-                std::cerr << visuaStudioError.str() << std::endl;
+                std::cerr << visualStudioError.str() << std::endl;
                 /*
                 std::cout << message << what << " line " << line << ':' << std::endl;
                 std::cout << get_line(lineStart) << std::endl;

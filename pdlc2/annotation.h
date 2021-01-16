@@ -102,9 +102,9 @@ namespace pam { namespace pdl
 
         void operator()(ast::Identifier& ast, Iterator pos) const
         {
-            int id = iters.size();
+            const auto id = iters.size();
             iters.push_back( pos );
-            ast.id = id;
+            ast.id = static_cast< int >(id);
         }
     };
 }}

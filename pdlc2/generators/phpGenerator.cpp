@@ -288,7 +288,7 @@ string PhpGenerator::doSinglePropertyBody(Identifier const& name, PropertyType c
 
     const auto brackets = arrayNotationList2Brackets( propertyType.arrayNotationList );
 
-    const string phpDocProperty = " * @property %1%%3% %2%";
+    const string phpDocProperty = " * @property %1%%3% $%2%";
 
     auto result = (boost::format(phpDocProperty)
         % type
@@ -343,7 +343,7 @@ string PhpGenerator::doIndexerProperty(PropertyNode const& propertyNode)
 
     const auto brackets = arrayNotationList2Brackets(propertyNode.propertyType.arrayNotationList);
 
-    const string phpDocProperty = " * @property %1%%3% %2%";
+    const string phpDocProperty = " * @property %1%%3% $%2%";
 
     auto result = (boost::format(phpDocProperty)
         % type
