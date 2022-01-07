@@ -285,7 +285,7 @@ string Generator::createFileHeader( string const& fullClassName )
 
     out << "/**\n";  
     out << "* PDL Compiler generated code\n";
-    out << "*      class " << fullClassName << "\n";
+    out << "* class " << fullClassName << "\n";
 //    out << "*      Generated on ";
 //
 //    auto *facet = new boost::posix_time::time_facet("%d-%b-%Y %H:%M:%S");
