@@ -284,7 +284,7 @@ string Generator::createFileHeader( string const& fullClassName )
     std::ostringstream out;
 
     out << "/**\n";  
-    out << "* PlusAMedia Design Language, generated code\n";
+    out << "* PDL Compiler generated code\n";
     out << "*      class " << fullClassName << "\n";
 //    out << "*      Generated on ";
 //

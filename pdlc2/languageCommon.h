@@ -1,4 +1,4 @@
-#pragma once;
+#pragma once
 
 //keywods
 #define NAMESPACE_KEYWORD  "namespace"

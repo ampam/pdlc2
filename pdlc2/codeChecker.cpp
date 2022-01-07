@@ -564,7 +564,11 @@ bool Checker::resolveClass( ClassNode& astClass )
 		}
 		else
 		{
-			_errorHandler( astClass.parentClass.get().front().id, "Parent class not found: " + astClass.name.name );
+			//_errorHandler( astClass.parentClass.get().front().id, "Parent class not found: " + astClass.name.name );
+			
+			auto parentClassname = SymbolTable::parseFullClassName(astClass.parentClass.get());
+			
+			_errorHandler( astClass.parentClass.get().front().id, "Parent class not found: " + parentClassname.second );
 			result = false;
 		}
 	}
