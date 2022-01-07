@@ -2,8 +2,8 @@
 #include "languageCommon.h"
 #include "symbols.h"
 #include "ast.h"
-#include "SymbolTable.h"
-#include "CodeChecker.h"
+#include "symbolTable.h"
+#include "codeChecker.h"
 
 using namespace pam::pdl::symbols;
 using namespace pam::pdl::ast;

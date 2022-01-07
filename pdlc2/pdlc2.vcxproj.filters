@@ -54,7 +54,7 @@
     <ClInclude Include="generators\csharpGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="generators\CppGenerator.h">
+    <ClInclude Include="generators\cppGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="generators\jsGenerator.h">
@@ -101,7 +101,7 @@
     <ClCompile Include="generators\csharpGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="generators\CppGenerator.cpp">
+    <ClCompile Include="generators\cppGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="generators\jsGenerator.cpp">

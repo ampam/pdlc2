@@ -2,7 +2,7 @@
 #include "languageCommon.h"
 #include "symbols.h"
 #include "ast.h"
-#include "SymbolTable.h"
+#include "symbolTable.h"
 
 using namespace pam::pdl::ast;
 
