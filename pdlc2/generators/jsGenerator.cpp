@@ -26,13 +26,13 @@ JsGenerator::JsGenerator( PdlConfig const& config ) :
     _variableDeclarationKeyword = PdlConfig::as_bool( _languageConfig, "useLet" ) ? "let" : "var";
 
 
-    //	_formatter.attr =
-    //		"{\n" +
-    //		_indent + "name: '%1%',\n" +
-    //		_indent + "values: {\n" +
-    //		_indent + _indent + "%2%" + "\n" +
-    //		_indent + "}\n" +
-    //		"}";
+    //    _formatter.attr =
+    //        "{\n" +
+    //        _indent + "name: '%1%',\n" +
+    //        _indent + "values: {\n" +
+    //        _indent + _indent + "%2%" + "\n" +
+    //        _indent + "}\n" +
+    //        "}";
 
     _formatter.attr = R"attr(
 {
@@ -123,16 +123,16 @@ string JsGenerator::doUsingList( UsingList const& astNode )
 
 string JsGenerator::doParentClass( ClassNode const& classAstNode )
 {
-	string result = "";
-    //	if ( classAstNode.parentClass )
-    //	{
-    //		auto parentClass = classAstNode.symbol->getParentClass();
+    string result = "";
+    //    if ( classAstNode.parentClass )
+    //    {
+    //        auto parentClass = classAstNode.symbol->getParentClass();
     //
-    //		_fullParentClass = parentClass->getNamespace()->name() + "." + parentClass->name();
+    //        _fullParentClass = parentClass->getNamespace()->name() + "." + parentClass->name();
     //
-    //		result = ( boost::format( "%1% = $.extend( true, {}, %2%, %1% );" )
-    //			% _classInNamespace % _fullParentClass ).str();
-    //	}
+    //        result = ( boost::format( "%1% = $.extend( true, {}, %2%, %1% );" )
+    //            % _classInNamespace % _fullParentClass ).str();
+    //    }
 
     return result;
 }
@@ -285,7 +285,7 @@ string JsGenerator::doClass( NamespaceNode const& astNamespace, ClassNode const&
     return result;
 }
 
-string JsGenerator::doProperty( PropertyNode const& propertyNode )
+string JsGenerator::doProperty( ast::PropertyNode const& propertyNode )
 {
     auto result = propertyNode.arguments.size() == 0
                       ? doSingleProperty( propertyNode )
@@ -475,11 +475,11 @@ Generator::AttributeInfo JsGenerator::processAttributeName( FullIdentifierNode c
 }
 
 
-string JsGenerator::visitAttrRequiredParams( AttrRequiredParams const& astNode )
+string JsGenerator::visitAttrRequiredParams( AttrRequiredParams const& astAttrRequireParams )
 {
     std::vector< string > paramVector;
     auto index = 1;
-    for ( auto const& param : astNode )
+    for ( auto const& param : astAttrRequireParams )
     {
         paramVector.push_back(
             "default" + std::to_string( index ) + ": " + boost::apply_visitor( _literalVisitor, param ) );

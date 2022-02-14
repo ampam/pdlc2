@@ -55,7 +55,7 @@ public:
     bool isIntrinsicType() const
     { return _isIntrinsicType; }
 
-	/*
+    /*
     bool setAsIntrinsicType() 
     { 
         _isClass = false;

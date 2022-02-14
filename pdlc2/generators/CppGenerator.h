@@ -25,7 +25,7 @@ protected:
 
     virtual std::string doMethod( ast::MethodNode const& astNode ) override;
     virtual std::string doConst( ast::ConstNode const& constNode ) override;
-    virtual std::string doProperty( ast::PropertyNode const& astNode ) override;
+    virtual std::string doProperty( ast::PropertyNode const& astProperty) override;
 
     virtual std::string visitLiteralString( std::string const& value ) override;
     virtual bool outputClass( std::string const& classSource, ast::ClassNode const& classAstNode ) override;

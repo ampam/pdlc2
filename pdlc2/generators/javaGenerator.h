@@ -15,25 +15,25 @@ namespace pam { namespace pdl { namespace codegen
 class JavaGenerator : public Generator
 {
 public:
-	explicit JavaGenerator( config::PdlConfig const& config );
+    explicit JavaGenerator( config::PdlConfig const& config );
 
 
 protected:
-	std::string doUsingList( ast::UsingList const& astNode ) override;
-	std::string doParentClass( ast::ClassNode const& classAstNode ) override;
-	std::string doClass( ast::NamespaceNode const& astNamespace, ast::ClassNode const& astNode ) override;
-	std::string doArgument( ast::ArgumentNode const& astNode ) override;
+    std::string doUsingList( ast::UsingList const& astNode ) override;
+    std::string doParentClass( ast::ClassNode const& classAstNode ) override;
+    std::string doClass( ast::NamespaceNode const& astNamespace, ast::ClassNode const& astNode ) override;
+    std::string doArgument( ast::ArgumentNode const& astNode ) override;
 
     virtual std::string doConst( ast::ConstNode const& constNode ) override;
-	std::string doMethod( ast::MethodNode const& astNode ) override;
-	std::string doProperty( ast::PropertyNode const& astNode ) override;
+    std::string doMethod( ast::MethodNode const& astNode ) override;
+    std::string doProperty( ast::PropertyNode const& astProperty) override;
 
-	std::string visitLiteralString( std::string const& value ) override;
-	bool outputClass( std::string const& classSource, ast::ClassNode const& classAstNode ) override;
+    std::string visitLiteralString( std::string const& value ) override;
+    bool outputClass( std::string const& classSource, ast::ClassNode const& classAstNode ) override;
 
-	AttributeInfo processAttributeName( ast::FullIdentifierNode const& attrName ) override;
+    AttributeInfo processAttributeName( ast::FullIdentifierNode const& attrName ) override;
 
-	boost::filesystem::path getFileOutputFolder() override;
+    boost::filesystem::path getFileOutputFolder() override;
 
     std::string doSingleProperty( ast::PropertyNode const& astNode );
     std::string doIndexerProperty( ast::PropertyNode const& astNode );

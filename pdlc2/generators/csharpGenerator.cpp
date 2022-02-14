@@ -63,8 +63,8 @@ CSharpGenerator::CSharpGenerator( PdlConfig const& config ):
 
 bool CSharpGenerator::outputClass( string const& classSource, ClassNode const& classAstNode )
 {
-	auto fullClassName = _mainNamespace + "." + classAstNode.name.name;
-	auto result = Generator::outputClass( classSource, fullClassName );
+    auto fullClassName = _mainNamespace + "." + classAstNode.name.name;
+    auto result = Generator::outputClass( classSource, fullClassName );
     return result;
 }
 
@@ -107,24 +107,24 @@ string CSharpGenerator::doClass( NamespaceNode const& astNamespace, ClassNode co
 
     std::vector<std::string> attributes;
     attributes.push_back( getAccessModifier( classAstNode.accessModifier ) );
-	auto classAttrs = boost::join( attributes, " " );
+    auto classAttrs = boost::join( attributes, " " );
 
-	auto inheritance = doParentClass( classAstNode );
+    auto inheritance = doParentClass( classAstNode );
 
     doMembers( classAstNode.members );
 
-	auto constBlock = boost::join( _consts, "\n\n" );
+    auto constBlock = boost::join( _consts, "\n\n" );
     boost::replace_all( constBlock, "\n", "\n" + _indent + _indent );
 
-	auto propertyBlock = boost::join( _properties, "\n\n" );
+    auto propertyBlock = boost::join( _properties, "\n\n" );
     boost::replace_all( propertyBlock, "\n", "\n" + _indent + _indent );
 
-	auto methodBlock = boost::join( _methods, "\n\n" );
+    auto methodBlock = boost::join( _methods, "\n\n" );
     boost::replace_all( methodBlock, "\n", "\n" + _indent + _indent );
 
-	auto usingBlock = doUsingList( astNamespace.usings );
+    auto usingBlock = doUsingList( astNamespace.usings );
 
-	auto templateCode = readTemplateCode();
+    auto templateCode = readTemplateCode();
 
     string result;
     result = boost::replace_all_copy( templateCode, GENERIC_TEMPLATE_HEADER, _outputHeader );
@@ -143,7 +143,7 @@ string CSharpGenerator::doClass( NamespaceNode const& astNamespace, ClassNode co
 
 string CSharpGenerator::doProperty( PropertyNode const& astNode )
 {
-	auto result = astNode.arguments.size() == 0 
+    auto result = astNode.arguments.size() == 0 
         ? doSingleProperty( astNode )
         : doIndexerProperty( astNode );
 
@@ -152,21 +152,21 @@ string CSharpGenerator::doProperty( PropertyNode const& astNode )
 
 string CSharpGenerator::doShortProperty(ShortPropertyNode const& shortPropertyNode)
 {
-	auto result = doSingleProperty(shortPropertyNode);
-	return result;
+    auto result = doSingleProperty(shortPropertyNode);
+    return result;
 }
 
 std::string CSharpGenerator::doSingleLongProperty( ShortPropertyNode const& shortPropertyNode)
 {
-	const auto type = getPropertyType(shortPropertyNode.propertyType );
+    const auto type = getPropertyType(shortPropertyNode.propertyType );
 
-	const auto name = toPascalString( shortPropertyNode.name.name );
-	const auto fieldName = fieldNameFromPropertyName( name );
+    const auto name = toPascalString( shortPropertyNode.name.name );
+    const auto fieldName = fieldNameFromPropertyName( name );
 
-	const auto fieldDeclaration = singleFieldType( type, fieldName );
+    const auto fieldDeclaration = singleFieldType( type, fieldName );
 
-	auto getMethod = (boost::format(_formatter.singleGetProperty) % fieldName).str();
-	auto setMethod = (boost::format(_formatter.singleSetProperty) % fieldName).str();
+    auto getMethod = (boost::format(_formatter.singleGetProperty) % fieldName).str();
+    auto setMethod = (boost::format(_formatter.singleSetProperty) % fieldName).str();
 
 
     auto accessFormatter = boost::format("%1% %2% %3%\n{%4%%5%\n}")
@@ -176,9 +176,9 @@ std::string CSharpGenerator::doSingleLongProperty( ShortPropertyNode const& shor
         % getMethod
         % setMethod;
 
-	const auto accessMethods = accessFormatter.str();
+    const auto accessMethods = accessFormatter.str();
 
-	auto result = fieldDeclaration;
+    auto result = fieldDeclaration;
 
     result += "\n" + accessMethods;
     
@@ -187,17 +187,17 @@ std::string CSharpGenerator::doSingleLongProperty( ShortPropertyNode const& shor
 
 std::string CSharpGenerator::doSingleLongProperty( PropertyNode const& propertyNode)
 {
-	const auto type = getPropertyType( propertyNode.propertyType );
+    const auto type = getPropertyType( propertyNode.propertyType );
 
-	const auto name = toPascalString( propertyNode.name.name );
-	const auto fieldName = fieldNameFromPropertyName( name );
+    const auto name = toPascalString( propertyNode.name.name );
+    const auto fieldName = fieldNameFromPropertyName( name );
 
-	const auto fieldDeclaration = singleFieldType( type, fieldName );
+    const auto fieldDeclaration = singleFieldType( type, fieldName );
 
     string getMethod;
     string setMethod;
 
-	const auto paAccess = propertyNode.access.get();
+    const auto paAccess = propertyNode.access.get();
     if ( paAccess == PropertyAccess::paRead || paAccess == PropertyAccess::paReadWrite )
     {
         getMethod = (boost::format( _formatter.singleGetProperty ) % fieldName).str();
@@ -215,10 +215,10 @@ std::string CSharpGenerator::doSingleLongProperty( PropertyNode const& propertyN
         % getMethod
         % setMethod;
 
-	const auto accessMethods = accessFormatter.str();
-	auto attributes = doAttributes(propertyNode.attributes );
+    const auto accessMethods = accessFormatter.str();
+    auto attributes = doAttributes(propertyNode.attributes );
 
-	auto result = fieldDeclaration;
+    auto result = fieldDeclaration;
 
     if ( !attributes.empty() )
     {
@@ -233,14 +233,14 @@ std::string CSharpGenerator::doSingleLongProperty( PropertyNode const& propertyN
 
 std::string CSharpGenerator::doSingleShortProperty( pam::pdl::ast::PropertyNode const& propertyNode )
 {
-	//TODO check array type
-	const auto type = getPropertyType(propertyNode.propertyType);
-	const auto name = toPascalString(propertyNode.name.name );
+    //TODO check array type
+    const auto type = getPropertyType(propertyNode.propertyType);
+    const auto name = toPascalString(propertyNode.name.name );
 
     string getMethod;
     string setMethod;
 
-	const auto paAccess = propertyNode.access.get();
+    const auto paAccess = propertyNode.access.get();
     if ( paAccess == PropertyAccess::paRead || paAccess == PropertyAccess::paReadWrite )
     {
         getMethod = "get;";
@@ -258,10 +258,10 @@ std::string CSharpGenerator::doSingleShortProperty( pam::pdl::ast::PropertyNode 
         % getMethod
         % setMethod;
 
-	const auto accessMethods = accessFormatter.str();
-	auto attributes = doAttributes(propertyNode.attributes );
+    const auto accessMethods = accessFormatter.str();
+    auto attributes = doAttributes(propertyNode.attributes );
 
-	auto result = !attributes.empty() ? ( doAttributes(propertyNode.attributes ) + "\n" ) : "";
+    auto result = !attributes.empty() ? ( doAttributes(propertyNode.attributes ) + "\n" ) : "";
     result += accessMethods;
     
     return result;
@@ -269,22 +269,22 @@ std::string CSharpGenerator::doSingleShortProperty( pam::pdl::ast::PropertyNode 
 
 std::string CSharpGenerator::doSingleShortProperty(pam::pdl::ast::ShortPropertyNode const& shortPropertyNode)
 {
-	//TODO check array type
-	const auto type = getPropertyType(shortPropertyNode.propertyType);
-	const auto name = toPascalString( shortPropertyNode.name.name );
+    //TODO check array type
+    const auto type = getPropertyType(shortPropertyNode.propertyType);
+    const auto name = toPascalString( shortPropertyNode.name.name );
 
-	
+    
 
-	auto accessFormatter = boost::format("%1% %2% %3% { %4% %5% }")
-		% getAccessModifier( AccessModifiers::amPublic )
-		% type
-		% name
-		% "get;"
-		% "set;";
+    auto accessFormatter = boost::format("%1% %2% %3% { %4% %5% }")
+        % getAccessModifier( AccessModifiers::amPublic )
+        % type
+        % name
+        % "get;"
+        % "set;";
 
-	auto result = accessFormatter.str();
+    auto result = accessFormatter.str();
 
-	return result;
+    return result;
 }
 
 //std::string CSharpGenerator::doIndexerLongProperty( pam::pdl::ast::PropertyNode const& astNode )
@@ -303,40 +303,40 @@ std::string CSharpGenerator::doSingleShortProperty(pam::pdl::ast::ShortPropertyN
 
 std::string CSharpGenerator::doSingleProperty( pam::pdl::ast::PropertyNode const& astNode )
 {
-	auto result = ( _emmitShortProperties ) 
-		? doSingleShortProperty( astNode ) 
-		: doSingleLongProperty( astNode );
+    auto result = ( _emmitShortProperties ) 
+        ? doSingleShortProperty( astNode ) 
+        : doSingleLongProperty( astNode );
 
     return result;
 }
 
 std::string CSharpGenerator::doSingleProperty( pam::pdl::ast::ShortPropertyNode const& shortPropertyNode)
 {
-	auto result = ( _emmitShortProperties ) 
-		? doSingleShortProperty(shortPropertyNode)
-		: doSingleLongProperty(shortPropertyNode);
+    auto result = ( _emmitShortProperties ) 
+        ? doSingleShortProperty(shortPropertyNode)
+        : doSingleLongProperty(shortPropertyNode);
 
     return result;
 }
 
 string CSharpGenerator::doIndexerProperty( pam::pdl::ast::PropertyNode const& propertyNode)
 {
-	const auto type = getPropertyType( propertyNode.propertyType );
+    const auto type = getPropertyType( propertyNode.propertyType );
 
-	const auto name = propertyNode.name.name;
+    const auto name = propertyNode.name.name;
 
-	auto const& argument1 = propertyNode.arguments.front();
-	const auto argument1Name = argument1.name.name;
-	const auto argument1Type = translateType( SymbolTable::joinIdentifier( argument1.type ) );
+    auto const& argument1 = propertyNode.arguments.front();
+    const auto argument1Name = argument1.name.name;
+    const auto argument1Type = translateType( SymbolTable::joinIdentifier( argument1.type ) );
 
-	const auto fieldName = fieldNameFromPropertyName( name );
+    const auto fieldName = fieldNameFromPropertyName( name );
 
     string getMethod;
     string setMethod;
 
-	const auto accessModifier = getAccessModifier(propertyNode.accessModifier );
+    const auto accessModifier = getAccessModifier(propertyNode.accessModifier );
 
-	const auto paAccess = propertyNode.access.get();
+    const auto paAccess = propertyNode.access.get();
     if ( paAccess == PropertyAccess::paRead || paAccess == PropertyAccess::paReadWrite )
     {
         getMethod = (boost::format( _formatter.indexerGetProperty ) % fieldName % argument1Name ).str();
@@ -354,7 +354,7 @@ string CSharpGenerator::doIndexerProperty( pam::pdl::ast::PropertyNode const& pr
         % getMethod
         % setMethod;
 
-	auto access = accessFormatter.str();
+    auto access = accessFormatter.str();
 
     //as of Microsoft: http://msdn.microsoft.com/en-us/library/2549tw02%28v=vs.71%29.aspx
     if ( name != "Item" )
@@ -363,7 +363,7 @@ string CSharpGenerator::doIndexerProperty( pam::pdl::ast::PropertyNode const& pr
         access = indexerAttr.str() + "\n" + access;
     }
 
-	auto result = 
+    auto result = 
         indexerFieldType( type, fieldName, argument1Type ) + "\n\n" +
         doAttributes(propertyNode.attributes ) + "\n" +
         access;
@@ -376,7 +376,7 @@ string CSharpGenerator::doMethod( MethodNode const& astNode )
     //In the case of C# most method should be virtual so 
     //you can override them in your project
 
-	auto result = internalGenerateMethod(
+    auto result = internalGenerateMethod(
         getAccessModifier( astNode.accessModifier ),
         //SymbolTable::joinIdentifier( astNode.type ),
         translateType( SymbolTable::joinIdentifier( astNode.type ) ),
@@ -424,7 +424,7 @@ string CSharpGenerator::internalGenerateMethod( string const& accessModifier,
         % name
         % doArgumentList( ArgumentList );
 
-	auto result = formatter.str();
+    auto result = formatter.str();
 
     return result;
 }
@@ -432,7 +432,7 @@ string CSharpGenerator::internalGenerateMethod( string const& accessModifier,
 
 string CSharpGenerator::visitLiteralString( string const& value )
 {
-	const auto validCSharpString = boost::replace_all_copy( value, "\"", "\"\"" );
+    const auto validCSharpString = boost::replace_all_copy( value, "\"", "\"\"" );
     return "@\"" + validCSharpString + "\"";
 }
 
@@ -445,7 +445,7 @@ Generator::AttributeInfo CSharpGenerator::processAttributeName( FullIdentifierNo
     //add namespace to using list
     if ( !result.classInfo.first.empty() )
     {
-		auto line = string("using ") + result.classInfo.first + ";";
+        auto line = string("using ") + result.classInfo.first + ";";
         _usingLines.insert( line );
     }
     return result;

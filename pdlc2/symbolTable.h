@@ -13,8 +13,8 @@ private:
     std::unordered_map<std::string, SymbolPtr> _table;
 
 public:
-	SymbolTable() {}
-	~SymbolTable() 
+    SymbolTable() {}
+    ~SymbolTable() 
     {
     }   
 
@@ -28,7 +28,7 @@ public:
 
     bool exists( const std::string& name )
     {
-	    const auto result = _table.find( name ) != _table.end();
+        const auto result = _table.find( name ) != _table.end();
         return result;
     }
 
@@ -36,7 +36,7 @@ public:
     T getSymbol( const std::string& name )
     {
         T result;
-	    const auto iter = _table.find( name );
+        const auto iter = _table.find( name );
         if ( iter != _table.end() )
         {
             result = boost::static_pointer_cast<typename T::element_type>(iter->second);
@@ -45,16 +45,16 @@ public:
     }
 
     template<>
-	SymbolPtr getSymbol<SymbolPtr>( const std::string& name )
-	{
-		SymbolPtr result;
-		const auto iter = _table.find(name);
-		if (iter != _table.end())
-		{
-			result = iter->second;
-		}
-		return result;
-	}
+    SymbolPtr getSymbol<SymbolPtr>( const std::string& name )
+    {
+        SymbolPtr result;
+        const auto iter = _table.find(name);
+        if (iter != _table.end())
+        {
+            result = iter->second;
+        }
+        return result;
+    }
 
     NamespaceSymbolPtr addNamespace( std::string const& fullName );
     NamespaceSymbolPtr addNamespace( ast::NamespaceNode const& astNode );
@@ -80,7 +80,7 @@ public:
             vString.push_back( identifier.name );
         }
 
-	    auto result = boost::algorithm::join( vString, "." );
+        auto result = boost::algorithm::join( vString, "." );
 
         return result;
     }
@@ -94,12 +94,12 @@ public:
             vString.push_back( identifier.name );
         }
 
-	    auto className = vString.back();
+        auto className = vString.back();
 
         vString.pop_back();
-	    auto namespaceName = boost::algorithm::join( vString, "." );
+        auto namespaceName = boost::algorithm::join( vString, "." );
 
-		ParsedClassname result( namespaceName, className );
+        ParsedClassname result( namespaceName, className );
 
         return result;
     }

@@ -29,7 +29,7 @@ PdlConfig::PdlConfig( int argc, char* argv[] )
         if ( argc == 6 )
         {
             _config[L"configFile"] = json::value::string( PdlConfig::to_wstring( argv[ 5 ] ) );
-	        const auto configFile = readConfigFile();
+            const auto configFile = readConfigFile();
             _config[L"file"] = configFile;
         }
 
@@ -52,7 +52,7 @@ web::json::value PdlConfig::readConfigFile()
 {
     web::json::value result;
 
-	auto configFile = fs::path( _config[L"configFile"].as_string() );
+    auto configFile = fs::path( _config[L"configFile"].as_string() );
 
     if ( fs::exists( configFile ) )
     {
@@ -64,14 +64,14 @@ web::json::value PdlConfig::readConfigFile()
             std::istream_iterator<char>(),
             std::back_inserter( jsonString ) );
 
-	    const auto jsonWString = PdlConfig::to_wstring( jsonString );
+        const auto jsonWString = PdlConfig::to_wstring( jsonString );
 
-		result = web::json::value::parse( jsonWString );
+        result = web::json::value::parse( jsonWString );
 
         std::wistringstream stream( jsonWString );
-		//std::wistringstream stream;
-		//stream.str( jsonWString );
-		//result = web::json::value::parse( stream );
+        //std::wistringstream stream;
+        //stream.str( jsonWString );
+        //result = web::json::value::parse( stream );
 
         stream >> result;
     }

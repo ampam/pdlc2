@@ -428,15 +428,15 @@ Generator::AttributeInfo PhpGenerator::processAttributeName(FullIdentifierNode c
     return result;
 }
 
-string PhpGenerator::visitAttrRequiredParams(AttrRequiredParams const& astNode)
+string PhpGenerator::visitAttrRequiredParams(AttrRequiredParams const& astAttrRequireParams)
 {
     string result;
 
-    if (!astNode.empty())
+    if (!astAttrRequireParams.empty())
     {
         std::vector< string > paramVector;
         auto index = 1;
-        for (auto const& param : astNode)
+        for (auto const& param : astAttrRequireParams)
         {
             paramVector.push_back("'default" + std::to_string(index) + "' => "
                 + boost::apply_visitor(_literalVisitor, param));

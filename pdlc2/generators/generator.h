@@ -54,7 +54,7 @@ namespace pam
                 virtual std::string doConst( ast::ConstNode const& constNode ) = 0;
 
                 virtual std::string doArgument( ast::ArgumentNode const& astArgument ) = 0;
-                virtual AttributeInfo processAttributeName( ast::FullIdentifierNode const& astFullIndenfier ) = 0;
+                virtual AttributeInfo processAttributeName( ast::FullIdentifierNode const& astFullIdentifier ) = 0;
 
                 virtual std::string doArgumentList( ast::ArgumentList const& astArgumentList );
 
@@ -71,7 +71,7 @@ namespace pam
                 virtual std::string visitAttrOptionalParams( ast::AttrOptionalParams const& astAttrOptionalParams );
                 virtual std::string visitAttrRequiredParams( ast::AttrRequiredParams const& astAttrRequiredParams );
                 virtual std::string visitAttrRequiredAndOptionals(
-                    ast::AttrRequiredAndOptionals const& astAttrRequiredAndOptionnals );
+                    ast::AttrRequiredAndOptionals const& astAttrRequiredAndOptionals );
                 virtual std::string visitLiteralInt( int const& value ) { return std::to_string( value ); }
                 virtual std::string visitLiteralDouble( double const& value ) { return std::to_string( value ); }
                 virtual std::string visitLiteralBool( bool const& value ) { return value ? "true" : "false"; }

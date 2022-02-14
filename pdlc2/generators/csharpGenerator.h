@@ -25,17 +25,17 @@ protected:
 
     virtual std::string doConst( ast::ConstNode const& constNode ) override;
     virtual std::string doMethod( pam::pdl::ast::MethodNode const& astNode ) override;
-    virtual std::string doProperty( pam::pdl::ast::PropertyNode const& astNode ) override;
-	virtual std::string doShortProperty(pam::pdl::ast::ShortPropertyNode const& shortPropertyNode) override;
+    virtual std::string doProperty( pam::pdl::ast::PropertyNode const& astProperty) override;
+    virtual std::string doShortProperty(pam::pdl::ast::ShortPropertyNode const& shortPropertyNode) override;
 
-	virtual AttributeInfo processAttributeName( pam::pdl::ast::FullIdentifierNode const& attrName ) override;
+    virtual AttributeInfo processAttributeName( pam::pdl::ast::FullIdentifierNode const& attrName ) override;
 
     virtual std::string visitLiteralString( std::string const& value ) override;
     virtual bool outputClass( std::string const& classSource, pam::pdl::ast::ClassNode const& classAstNode ) override;
     virtual boost::filesystem::path getFileOutputFolder() override;
 
     std::string doSingleProperty( pam::pdl::ast::PropertyNode const& astNode );
-	std::string doSingleProperty(pam::pdl::ast::ShortPropertyNode const& astNode);
+    std::string doSingleProperty(pam::pdl::ast::ShortPropertyNode const& astNode);
 
     std::string doSingleLongProperty( pam::pdl::ast::PropertyNode const& astNode );
     std::string doSingleShortProperty( pam::pdl::ast::PropertyNode const& astNode );

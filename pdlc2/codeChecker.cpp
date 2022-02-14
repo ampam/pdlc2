@@ -11,118 +11,118 @@ using namespace pam::pdl::codechecker;
 
 bool Checker::visitNamespace( NamespaceNode& astNamespace )
 {
-	auto result = true;
-	const auto namespaceSymbol = _symbolTable->addNamespace( astNamespace );
-	astNamespace.symbol = namespaceSymbol;
+    auto result = true;
+    const auto namespaceSymbol = _symbolTable->addNamespace( astNamespace );
+    astNamespace.symbol = namespaceSymbol;
 
-	const auto fullNamespace = SymbolTable::joinIdentifier( astNamespace.name );
-	_namespaces[ fullNamespace ] = namespaceSymbol;
+    const auto fullNamespace = SymbolTable::joinIdentifier( astNamespace.name );
+    _namespaces[ fullNamespace ] = namespaceSymbol;
 
-	enterNamespaceScope( namespaceSymbol );
+    enterNamespaceScope( namespaceSymbol );
 
-	result = visitUsingList( astNamespace.usings ) && result;
-	result = visitClassList( astNamespace.classes ) && result;
+    result = visitUsingList( astNamespace.usings ) && result;
+    result = visitClassList( astNamespace.classes ) && result;
 
-	astNamespace.isPending = astNamespace.classes.isPending;
+    astNamespace.isPending = astNamespace.classes.isPending;
 
-	exitNamespaceScope();
+    exitNamespaceScope();
 
-	return result;
+    return result;
 }
 
 
 bool Checker::visitUsingList( UsingList& usingList )
 {
-	auto result = true;
+    auto result = true;
 
-	for ( auto& usingLine : usingList )
-	{
-		result = visitUsing( usingLine ) && result;
-	}
-	return result;
+    for ( auto& usingLine : usingList )
+    {
+        result = visitUsing( usingLine ) && result;
+    }
+    return result;
 }
 
 bool Checker::visitUsing( UsingNode& usingNode )
 {
-	auto result = true;
+    auto result = true;
 
-	auto parsedClassName = SymbolTable::parseFullClassName( usingNode.className );
+    auto parsedClassName = SymbolTable::parseFullClassName( usingNode.className );
 
-	auto& fullNamespace = parsedClassName.first;
-	auto namespaceSymbol( _symbolTable->getNamespace( fullNamespace ) );
-	_namespaces[ fullNamespace ] = namespaceSymbol;
+    auto& fullNamespace = parsedClassName.first;
+    auto namespaceSymbol( _symbolTable->getNamespace( fullNamespace ) );
+    _namespaces[ fullNamespace ] = namespaceSymbol;
 
-	auto& className = parsedClassName.second;
+    auto& className = parsedClassName.second;
 
-	if ( !namespaceSymbol->symbolTable()->classExists( className ) )
-	{
-		usingNode.symbol = namespaceSymbol->symbolTable()->addUsingClass( usingNode );
+    if ( !namespaceSymbol->symbolTable()->classExists( className ) )
+    {
+        usingNode.symbol = namespaceSymbol->symbolTable()->addUsingClass( usingNode );
 
-		const auto fullClassName = fullNamespace + "." + className;
-		_classes[ fullClassName ] = usingNode.symbol;
-	}
-	else
-	{
-		_errorHandler( usingNode.className.front().id, "Class redeclared: " + className );
-		result = false;
-	}
-	return result;
+        const auto fullClassName = fullNamespace + "." + className;
+        _classes[ fullClassName ] = usingNode.symbol;
+    }
+    else
+    {
+        _errorHandler( usingNode.className.front().id, "Class redeclared: " + className );
+        result = false;
+    }
+    return result;
 }
 
 bool Checker::visitClassList( ClassList& classList )
 {
-	auto result = true;
+    auto result = true;
 
-	for ( auto& astClassNode : classList )
-	{
-		result = visitClass( astClassNode ) && result;
-		classList.isPending = classList.isPending || astClassNode.isPending;
-	}
-	return result;
+    for ( auto& astClassNode : classList )
+    {
+        result = visitClass( astClassNode ) && result;
+        classList.isPending = classList.isPending || astClassNode.isPending;
+    }
+    return result;
 }
 
 SymbolPtr Checker::useType( FullIdentifierNode const& astFullIdentifier )
 {
-	auto result = isIntrinsicType( astFullIdentifier )
-		? _symbolTable->getSymbol<SymbolPtr>( SymbolTable::joinIdentifier( astFullIdentifier ) )
-		: useClass( astFullIdentifier, false );
+    auto result = isIntrinsicType( astFullIdentifier )
+        ? _symbolTable->getSymbol<SymbolPtr>( SymbolTable::joinIdentifier( astFullIdentifier ) )
+        : useClass( astFullIdentifier, false );
 
 
-	return result;
+    return result;
 }
 
 ClassSymbolPtr Checker::useClass( FullIdentifierNode const& className, bool excludeCurrentClass )
 {
-	auto classSymbol = getClassSymbol( className, excludeCurrentClass );
+    auto classSymbol = getClassSymbol( className, excludeCurrentClass );
 
-	if ( classSymbol )
-	{
-		classSymbol->incUseCount();
-	}
+    if ( classSymbol )
+    {
+        classSymbol->incUseCount();
+    }
 
-	return classSymbol;
+    return classSymbol;
 }
 
 bool Checker::classExists( FullIdentifierNode const& className )
 {
-	const auto classSymbol = getClassSymbol( className, false );
-	const auto result = static_cast<bool>( classSymbol );
-	return result;
+    const auto classSymbol = getClassSymbol( className, false );
+    const auto result = static_cast<bool>( classSymbol );
+    return result;
 }
 
 ClassSymbolPtr Checker::getClassSymbol( FullIdentifierNode const& className, bool excludeCurrentClass )
 {
-	ClassSymbolPtr result;
+    ClassSymbolPtr result;
 
-	auto parsedClassName = SymbolTable::parseFullClassName( className );
-	auto& namespaceName = parsedClassName.first;
-	auto& singleClassName = parsedClassName.second;
+    auto parsedClassName = SymbolTable::parseFullClassName( className );
+    auto& namespaceName = parsedClassName.first;
+    auto& singleClassName = parsedClassName.second;
 
-	if ( namespaceName.empty() )
-	{
-		for ( const auto namespaceItem : _namespaces )
-		{
-			const auto fullClassName = namespaceItem.first + "." + singleClassName;
+    if ( namespaceName.empty() )
+    {
+        for ( const auto namespaceItem : _namespaces )
+        {
+            const auto fullClassName = namespaceItem.first + "." + singleClassName;
 
             auto excluded = excludeCurrentClass && fullClassName == _currentFullClassName;
 
@@ -135,26 +135,26 @@ ClassSymbolPtr Checker::getClassSymbol( FullIdentifierNode const& className, boo
                     break;
                 }
             }
-		}
-	}
-	else
-	{
-		const auto fullClassName = namespaceName + "." + singleClassName;
+        }
+    }
+    else
+    {
+        const auto fullClassName = namespaceName + "." + singleClassName;
 
-		const auto iter = _classes.find( fullClassName );
-		if ( iter != _classes.end() )
-		{
-			result = iter->second;
-		}
-	}
+        const auto iter = _classes.find( fullClassName );
+        if ( iter != _classes.end() )
+        {
+            result = iter->second;
+        }
+    }
 
 
-	return result;
+    return result;
 }
 
 bool Checker::visitParentClass( ClassNode& classNode )
 {
-	auto result = true;
+    auto result = true;
 
     const auto parentClassSymbol = useClass( classNode.parentClass.get(), true );
     if ( parentClassSymbol )
@@ -168,25 +168,25 @@ bool Checker::visitParentClass( ClassNode& classNode )
 
     classNode.parentClass.get().isPending = !result;
 
-	return result;
+    return result;
 }
 
 bool Checker::visitClass( ClassNode& classNode )
 {
-	auto result = true;
+    auto result = true;
 
-	auto const& className = classNode.name.name;
-	const auto fullClassName = _currentNamespace->name() + "." + className;
+    auto const& className = classNode.name.name;
+    const auto fullClassName = _currentNamespace->name() + "." + className;
 
-	//checkAccessModifier( astClass.accessModifier );
+    //checkAccessModifier( astClass.accessModifier );
 
-	if ( !_currentNamespace->symbolTable()->classExists( className ) )
-	{
-		auto classSymbol = _currentNamespace->symbolTable()->addClass( classNode, _currentNamespace );
-		classSymbol->incUseCount();
+    if ( !_currentNamespace->symbolTable()->classExists( className ) )
+    {
+        auto classSymbol = _currentNamespace->symbolTable()->addClass( classNode, _currentNamespace );
+        classSymbol->incUseCount();
 
-		_classes[ fullClassName ] = classSymbol;
-		classNode.symbol = classSymbol;
+        _classes[ fullClassName ] = classSymbol;
+        classNode.symbol = classSymbol;
 
         if ( isNamespace( fullClassName ) )
         {
@@ -195,185 +195,185 @@ bool Checker::visitClass( ClassNode& classNode )
         }
 
         enterClassScope( classSymbol );
-		if ( classNode.parentClass )
-		{
+        if ( classNode.parentClass )
+        {
             visitParentClass( classNode );
-		}
+        }
 
-		result = visitMembers( classNode.members ) && result;
+        result = visitMembers( classNode.members ) && result;
 
-		exitClassScope();
-	}
-	else
-	{
-		_errorHandler( classNode.name.id, "Class redeclared: " + className );
-		result = false;
-	}
+        exitClassScope();
+    }
+    else
+    {
+        _errorHandler( classNode.name.id, "Class redeclared: " + className );
+        result = false;
+    }
 
-	classNode.isPending = classNode.members.isPending || ( classNode.parentClass && classNode.parentClass.get().isPending );
+    classNode.isPending = classNode.members.isPending || ( classNode.parentClass && classNode.parentClass.get().isPending );
 
-	return result;
+    return result;
 }
 
 bool Checker::visitMembers( MemberList& astMemberList )
 {
-	auto result = true;
+    auto result = true;
 
-	Checker::MemberVisitor memberVisitor( *this, astMemberList );
+    Checker::MemberVisitor memberVisitor( *this, astMemberList );
 
-	for ( auto& member : astMemberList )
-	{
-		result = memberVisitor( member ) && result;
-	}
+    for ( auto& member : astMemberList )
+    {
+        result = memberVisitor( member ) && result;
+    }
 
-	return result;
+    return result;
 }
 
 bool Checker::visitAttributeList( AttributeListNode& astAttributeList )
 {
-	auto result = true;
+    auto result = true;
 
-	for ( auto& attribute : astAttributeList )
-	{
-		result = visitAttribute( attribute ) || result;
-	}
+    for ( auto& attribute : astAttributeList )
+    {
+        result = visitAttribute( attribute ) || result;
+    }
 
-	return result;
+    return result;
 }
 
 bool Checker::visitAttribute( AttributeNode& astAttribute )
 {
-	auto classSymbol = useClass( astAttribute.name, true );
-	const auto result = classSymbol.get() != nullptr;
-	if ( classSymbol )
-	{
-		classSymbol->setAsAttributeClass();
-	}
+    auto classSymbol = useClass( astAttribute.name, true );
+    const auto result = classSymbol.get() != nullptr;
+    if ( classSymbol )
+    {
+        classSymbol->setAsAttributeClass();
+    }
 
-	astAttribute.isPending = !result || astAttribute.isPending;
+    astAttribute.isPending = !result || astAttribute.isPending;
 
-	return result;
+    return result;
 }
 
 bool Checker::resolveAttribute( AttributeNode& astAttribute )
 {
-	auto classSymbol = useClass( astAttribute.name, true );
-	const auto result = classSymbol.get() != nullptr;
-	if ( result )
-	{
-		classSymbol->setAsAttributeClass();
-	}
-	else
-	{
-		_errorHandler( astAttribute.name.front().id, "Attribute class not found: " + astAttribute.name );
-	}
+    auto classSymbol = useClass( astAttribute.name, true );
+    const auto result = classSymbol.get() != nullptr;
+    if ( result )
+    {
+        classSymbol->setAsAttributeClass();
+    }
+    else
+    {
+        _errorHandler( astAttribute.name.front().id, "Attribute class not found: " + astAttribute.name );
+    }
 
-	return result;
+    return result;
 }
 
 
 //bool Checker::visitPropertyType( PropertyNode& propertyNode )
 //{
-//	auto result = false;
+//    auto result = false;
 //
-//	const auto typeSymbol = useType( propertyNode.propertyType.type );
+//    const auto typeSymbol = useType( propertyNode.propertyType.type );
 //
-//	if ( typeSymbol )
-//	{
-//		propertyNode.symbol->setTypeSymbol( typeSymbol );
-//		result = true;
-//	}
+//    if ( typeSymbol )
+//    {
+//        propertyNode.symbol->setTypeSymbol( typeSymbol );
+//        result = true;
+//    }
 //
-//	return result;
+//    return result;
 //}
 
 
 bool Checker::visitProperty( PropertyNode& propertyNode )
 {
-	auto result = true;
+    auto result = true;
 
-	if ( !propertyExists( _currentClassSymbol, propertyNode ) )
-	{
-		visitPropertyAccess( propertyNode.access );
+    if ( !propertyExists( _currentClassSymbol, propertyNode ) )
+    {
+        visitPropertyAccess( propertyNode.access );
 
-		const auto propertySymbol = _currentClassSymbol->symbolTable()->addProperty( propertyNode, _currentClassSymbol );
-		propertyNode.symbol = propertySymbol;
-		propertyNode.propertyType.isPending = !visitPropertyType( propertyNode );
+        const auto propertySymbol = _currentClassSymbol->symbolTable()->addProperty( propertyNode, _currentClassSymbol );
+        propertyNode.symbol = propertySymbol;
+        propertyNode.propertyType.isPending = !visitPropertyType( propertyNode );
 
-		enterClassMemberScope( propertySymbol );
+        enterClassMemberScope( propertySymbol );
         visitAttributeList( propertyNode.attributes );
 
-		//NOTE: this is a simplification to allow easier code generation
-		//in multiple languages
-		if ( propertyNode.arguments.size() > 1 )
-		{
-			_errorHandler( propertyNode.name.id, "Properties can't have more than 1 argument: " + propertyNode.name.name );
-			result = false;
-		}
+        //NOTE: this is a simplification to allow easier code generation
+        //in multiple languages
+        if ( propertyNode.arguments.size() > 1 )
+        {
+            _errorHandler( propertyNode.name.id, "Properties can't have more than 1 argument: " + propertyNode.name.name );
+            result = false;
+        }
 
-		if ( propertyNode.arguments.size() > 0 )
-		{
-			if ( _currentClassSymbol->hasIndexer() )
-			{
-				_errorHandler( propertyNode.name.id,
-					"One indexer or property with argument allowed per class(c# limitation): " + propertyNode.name.
-					name );
-				result = false;
-			}
-			_currentClassSymbol->setIndexer();
-		}
+        if ( propertyNode.arguments.size() > 0 )
+        {
+            if ( _currentClassSymbol->hasIndexer() )
+            {
+                _errorHandler( propertyNode.name.id,
+                    "One indexer or property with argument allowed per class(c# limitation): " + propertyNode.name.
+                    name );
+                result = false;
+            }
+            _currentClassSymbol->setIndexer();
+        }
 
-		result = visitArgumentList( propertyNode.arguments ) && result;
+        result = visitArgumentList( propertyNode.arguments ) && result;
 
         if ( propertyNode.name.name == PROPERTY_CONTROL )
         {
             _currentClassSymbol->setPropertyControl();
         }
 
-		exitClassMemberScope();
-	}
-	else
-	{
-		_errorHandler( propertyNode.name.id, "Property or method redeclared: " + propertyNode.name.name );
-		result = false;
-	}
+        exitClassMemberScope();
+    }
+    else
+    {
+        _errorHandler( propertyNode.name.id, "Property or method redeclared: " + propertyNode.name.name );
+        result = false;
+    }
 
-	propertyNode.isPending =
-		propertyNode.propertyType.isPending ||
-		propertyNode.arguments.isPending ||
-		propertyNode.attributes.isPending;
+    propertyNode.isPending =
+        propertyNode.propertyType.isPending ||
+        propertyNode.arguments.isPending ||
+        propertyNode.attributes.isPending;
 
-	return result;
+    return result;
 }
 
 bool Checker::visitPropertyType( PropertyNode& propertyNode )
 {
-	auto result = false;
+    auto result = false;
 
-	const auto typeSymbol = useType( propertyNode.propertyType.type );
+    const auto typeSymbol = useType( propertyNode.propertyType.type );
 
-	if ( typeSymbol )
-	{
-		propertyNode.symbol->setTypeSymbol( typeSymbol );
-		result = true;
-	}
+    if ( typeSymbol )
+    {
+        propertyNode.symbol->setTypeSymbol( typeSymbol );
+        result = true;
+    }
 
-	return result;
+    return result;
 }
 
 bool Checker::visitPropertyType( ShortPropertyNode& shortPropertyNode )
 {
-	auto result = false;
+    auto result = false;
 
-	const auto typeSymbol = useType( shortPropertyNode.propertyType.type );
+    const auto typeSymbol = useType( shortPropertyNode.propertyType.type );
 
-	if ( typeSymbol )
-	{
-		shortPropertyNode.symbol->setTypeSymbol( typeSymbol );
-		result = true;
-	}
+    if ( typeSymbol )
+    {
+        shortPropertyNode.symbol->setTypeSymbol( typeSymbol );
+        result = true;
+    }
 
-	return result;
+    return result;
 }
 
 
@@ -402,346 +402,346 @@ bool Checker::visitConst( ConstNode& constNode )
 
 bool Checker::visitMethod( MethodNode& astMethod )
 {
-	auto result = true;
+    auto result = true;
 
-	if ( !methodExists( _currentClassSymbol, astMethod ) )
-	{
-		const auto methodSymbol = _currentClassSymbol->symbolTable()->addMethod( astMethod, _currentClassSymbol );
-		astMethod.symbol = methodSymbol;
+    if ( !methodExists( _currentClassSymbol, astMethod ) )
+    {
+        const auto methodSymbol = _currentClassSymbol->symbolTable()->addMethod( astMethod, _currentClassSymbol );
+        astMethod.symbol = methodSymbol;
 
-		astMethod.type.isPending = !useType( astMethod.type );
+        astMethod.type.isPending = !useType( astMethod.type );
 
-		enterClassMemberScope( methodSymbol );
+        enterClassMemberScope( methodSymbol );
 
-		result = visitArgumentList( astMethod.arguments ) && result;
+        result = visitArgumentList( astMethod.arguments ) && result;
 
-		exitClassMemberScope();
-	}
-	else
-	{
-		_errorHandler( astMethod.name.id, "Property or method redeclared: " + astMethod.name );
-		result = false;
-	}
+        exitClassMemberScope();
+    }
+    else
+    {
+        _errorHandler( astMethod.name.id, "Property or method redeclared: " + astMethod.name );
+        result = false;
+    }
 
-	astMethod.isPending = astMethod.type.isPending || astMethod.arguments.isPending;
+    astMethod.isPending = astMethod.type.isPending || astMethod.arguments.isPending;
 
-	return result;
+    return result;
 }
 
 
 bool Checker::visitArgument( ArgumentNode& astArgument )
 {
-	auto result = true;
+    auto result = true;
 
-	if ( !argumentExists( _currentMember, astArgument ) )
-	{
-		const auto fullType = SymbolTable::joinIdentifier( astArgument.type );
-		_currentMember->addArgument( astArgument.name.name, fullType );
+    if ( !argumentExists( _currentMember, astArgument ) )
+    {
+        const auto fullType = SymbolTable::joinIdentifier( astArgument.type );
+        _currentMember->addArgument( astArgument.name.name, fullType );
 
-		astArgument.type.isPending = !useType( astArgument.type );
-	}
-	else
-	{
-		_errorHandler( astArgument.name.id, "Argument name redeclared: " + astArgument.name );
-		result = false;
-	}
+        astArgument.type.isPending = !useType( astArgument.type );
+    }
+    else
+    {
+        _errorHandler( astArgument.name.id, "Argument name redeclared: " + astArgument.name );
+        result = false;
+    }
 
-	astArgument.isPending = astArgument.type.isPending;
+    astArgument.isPending = astArgument.type.isPending;
 
-	return result;
+    return result;
 }
 
 bool Checker::visitArgumentList( ArgumentList& astArgumentList )
 {
-	auto result = true;
+    auto result = true;
 
-	for ( auto& argument : astArgumentList )
-	{
-		result = visitArgument( argument ) && result;
-		astArgumentList.isPending = astArgumentList.isPending || argument.isPending;
-	}
-	return result;
+    for ( auto& argument : astArgumentList )
+    {
+        result = visitArgument( argument ) && result;
+        astArgumentList.isPending = astArgumentList.isPending || argument.isPending;
+    }
+    return result;
 }
 
 bool Checker::methodExists( ClassSymbolPtr classSymbol, MethodNode& astMethod )
 {
-	auto classSymbols = classSymbol->symbolTable();
+    auto classSymbols = classSymbol->symbolTable();
 
-	const auto result = nullptr != classSymbols->getSymbol<MethodSymbolPtr>( astMethod.name.name ).get();
+    const auto result = nullptr != classSymbols->getSymbol<MethodSymbolPtr>( astMethod.name.name ).get();
 
-	return result;
+    return result;
 }
 
 bool Checker::constExists( ClassSymbolPtr classSymbol, ConstNode& constNode )
 {
-	auto classSymbols = classSymbol->symbolTable();
+    auto classSymbols = classSymbol->symbolTable();
 
-	const auto result = nullptr != classSymbols->getSymbol<ConstSymbolPtr>( constNode.name.name ).get();
+    const auto result = nullptr != classSymbols->getSymbol<ConstSymbolPtr>( constNode.name.name ).get();
 
-	return result;
+    return result;
 }
 
 bool Checker::propertyExists( ClassSymbolPtr classSymbol, PropertyNode& astProperty )
 {
-	auto classSymbols = classSymbol->symbolTable();
+    auto classSymbols = classSymbol->symbolTable();
 
-	const auto result = nullptr != classSymbols->getSymbol<PropertySymbolPtr>( astProperty.name.name ).get();
+    const auto result = nullptr != classSymbols->getSymbol<PropertySymbolPtr>( astProperty.name.name ).get();
 
-	return result;
+    return result;
 }
 
 bool Checker::propertyExists( ClassSymbolPtr classSymbol, ShortPropertyNode& shortPropertyNode )
 {
-	auto classSymbols = classSymbol->symbolTable();
+    auto classSymbols = classSymbol->symbolTable();
 
-	const auto result = nullptr != classSymbols->getSymbol<PropertySymbolPtr>( shortPropertyNode.name.name ).get();
+    const auto result = nullptr != classSymbols->getSymbol<PropertySymbolPtr>( shortPropertyNode.name.name ).get();
 
-	return result;
+    return result;
 }
 
 bool Checker::argumentExists( ClassMemberSymbolPtr memberSymbol, ArgumentNode& astArgument )
 {
-	auto arguments = memberSymbol->getArguments();
+    auto arguments = memberSymbol->getArguments();
 
-	const auto result = arguments.find( astArgument.name.name ) != arguments.end();
+    const auto result = arguments.find( astArgument.name.name ) != arguments.end();
 
-	return result;
+    return result;
 }
 
 bool Checker::isIntrinsicType( FullIdentifierNode const& astFullIndentifier )
 {
-	auto result = false;
+    auto result = false;
 
-	auto fullType = SymbolTable::joinIdentifier( astFullIndentifier );
+    auto fullType = SymbolTable::joinIdentifier( astFullIndentifier );
 
-	if ( fullType.find( '.' ) == std::string::npos )
-	{
-		result = _intrinsicTypes.find( fullType ) != _intrinsicTypes.end();
-	}
+    if ( fullType.find( '.' ) == std::string::npos )
+    {
+        result = _intrinsicTypes.find( fullType ) != _intrinsicTypes.end();
+    }
 
-	return result;
+    return result;
 }
 
 bool Checker::isNamespace( std::string const& fullNamespace )
 {
-	return _namespaces.find( fullNamespace ) != _namespaces.end();
+    return _namespaces.find( fullNamespace ) != _namespaces.end();
 }
 
 bool Checker::resolveNamespace( NamespaceNode& astNamespace )
 {
-	enterNamespaceScope( astNamespace.symbol );
+    enterNamespaceScope( astNamespace.symbol );
 
-	const auto result = resolveClassList( astNamespace.classes );
+    const auto result = resolveClassList( astNamespace.classes );
 
-	exitNamespaceScope();
+    exitNamespaceScope();
 
-	return result;
+    return result;
 }
 
 bool Checker::resolveClassList( ClassList& astClassList )
 {
-	auto result = true;
+    auto result = true;
 
-	for ( auto& astClassNode : astClassList )
-	{
-		if ( astClassNode.isPending )
-		{
-			result = resolveClass( astClassNode ) && result;
-		}
-	}
-	return result;
+    for ( auto& astClassNode : astClassList )
+    {
+        if ( astClassNode.isPending )
+        {
+            result = resolveClass( astClassNode ) && result;
+        }
+    }
+    return result;
 }
 
 bool Checker::resolveClass( ClassNode& astClass )
 {
-	auto result = true;
-	if ( astClass.parentClass && astClass.parentClass.get().isPending )
-	{
-		if ( resolveParentClass( astClass ) )
-		{
-			const auto classSymbol = useClass( astClass.parentClass.get(), true );
-			astClass.symbol->setParentClass( classSymbol );
-		}
-		else
-		{
-			//_errorHandler( astClass.parentClass.get().front().id, "Parent class not found: " + astClass.name.name );
-			
-			auto parentClassname = SymbolTable::parseFullClassName(astClass.parentClass.get());
-			
-			_errorHandler( astClass.parentClass.get().front().id, "Parent class not found: " + parentClassname.second );
-			result = false;
-		}
-	}
+    auto result = true;
+    if ( astClass.parentClass && astClass.parentClass.get().isPending )
+    {
+        if ( resolveParentClass( astClass ) )
+        {
+            const auto classSymbol = useClass( astClass.parentClass.get(), true );
+            astClass.symbol->setParentClass( classSymbol );
+        }
+        else
+        {
+            //_errorHandler( astClass.parentClass.get().front().id, "Parent class not found: " + astClass.name.name );
+            
+            auto parentClassname = SymbolTable::parseFullClassName(astClass.parentClass.get());
+            
+            _errorHandler( astClass.parentClass.get().front().id, "Parent class not found: " + parentClassname.second );
+            result = false;
+        }
+    }
 
-	if ( astClass.members.isPending )
-	{
-		enterClassScope( astClass.symbol );
-		result = resolveMemberList( astClass.members ) && result;
-		exitClassScope();
-	}
+    if ( astClass.members.isPending )
+    {
+        enterClassScope( astClass.symbol );
+        result = resolveMemberList( astClass.members ) && result;
+        exitClassScope();
+    }
 
-	return result;
+    return result;
 }
 
 
 bool Checker::resolveMemberList( MemberList& astMemberList )
 {
-	auto result = true;
+    auto result = true;
 
-	Checker::ResolveMemberVisitor memberVisitor( *this, astMemberList );
+    Checker::ResolveMemberVisitor memberVisitor( *this, astMemberList );
 
-	for ( auto& member : astMemberList )
-	{
-		result = memberVisitor( member ) && result;
-	}
+    for ( auto& member : astMemberList )
+    {
+        result = memberVisitor( member ) && result;
+    }
 
-	return result;
+    return result;
 }
 
 
 bool Checker::resolveArgument( ArgumentNode& astArgument )
 {
-	auto result = nullptr != useType( astArgument.type ).get();
+    auto result = nullptr != useType( astArgument.type ).get();
 
-	if ( !result )
-	{
-		_errorHandler( astArgument.type.front().id, "Argument type not found: " + astArgument.type );
-		result = false;
-	}
-	return result;
+    if ( !result )
+    {
+        _errorHandler( astArgument.type.front().id, "Argument type not found: " + astArgument.type );
+        result = false;
+    }
+    return result;
 }
 
 
 bool Checker::resolveArgumentList( ArgumentList& astArgumentList )
 {
-	auto result = true;
+    auto result = true;
 
-	for ( auto& argument : astArgumentList )
-	{
-		if ( argument.isPending )
-		{
-			result = resolveArgument( argument ) && result;
-		}
-	}
-	return result;
+    for ( auto& argument : astArgumentList )
+    {
+        if ( argument.isPending )
+        {
+            result = resolveArgument( argument ) && result;
+        }
+    }
+    return result;
 }
 
 
 bool Checker::resolvePropertyType( PropertyType& propertyType )
 {
-	const auto result = nullptr != useType( propertyType.type ).get();
-	if ( !result )
-	{
-		_errorHandler( propertyType.type.front().id,
-			"Property type not found: " + propertyType.type );
-	}
+    const auto result = nullptr != useType( propertyType.type ).get();
+    if ( !result )
+    {
+        _errorHandler( propertyType.type.front().id,
+            "Property type not found: " + propertyType.type );
+    }
 
-	return result;
+    return result;
 }
 
 bool Checker::resolveProperty( PropertyNode& propertyNode )
 {
-	auto result = true;
-	if ( propertyNode.propertyType.isPending )
-	{
-		result = resolvePropertyType( propertyNode.propertyType );
-	}
+    auto result = true;
+    if ( propertyNode.propertyType.isPending )
+    {
+        result = resolvePropertyType( propertyNode.propertyType );
+    }
 
 
-	if ( propertyNode.arguments.isPending )
-	{
-		enterClassMemberScope( propertyNode.symbol );
+    if ( propertyNode.arguments.isPending )
+    {
+        enterClassMemberScope( propertyNode.symbol );
 
-		result = resolveArgumentList( propertyNode.arguments );
+        result = resolveArgumentList( propertyNode.arguments );
 
-		exitClassMemberScope();
-	}
+        exitClassMemberScope();
+    }
 
-	if ( propertyNode.attributes.isPending )
-	{
-		resolveAttributeList( propertyNode.attributes );
-	}
+    if ( propertyNode.attributes.isPending )
+    {
+        resolveAttributeList( propertyNode.attributes );
+    }
 
-	return result;
+    return result;
 }
 
 bool Checker::resolveProperty( ShortPropertyNode& shortPropertyNode )
 {
-	auto result = true;
-	if ( shortPropertyNode.propertyType.isPending )
-	{
-		result = resolvePropertyType( shortPropertyNode.propertyType );
-	}
+    auto result = true;
+    if ( shortPropertyNode.propertyType.isPending )
+    {
+        result = resolvePropertyType( shortPropertyNode.propertyType );
+    }
 
-	return result;
+    return result;
 }
 
 bool Checker::visitPropertyAccess( boost::optional<pam::pdl::PropertyAccess>& access )
 {
-	if ( !access )
-	{
-		access = pam::pdl::PropertyAccess::paReadWrite;
-	}
-	return true;
+    if ( !access )
+    {
+        access = pam::pdl::PropertyAccess::paReadWrite;
+    }
+    return true;
 }
 
 bool Checker::visitShortProperty( ShortPropertyNode& shortPropertyNode )
 {
-	auto result = true;
+    auto result = true;
 
-	if ( !propertyExists( _currentClassSymbol, shortPropertyNode ) )
-	{
+    if ( !propertyExists( _currentClassSymbol, shortPropertyNode ) )
+    {
 
-		const auto propertySymbol = _currentClassSymbol->symbolTable()->addProperty( shortPropertyNode, _currentClassSymbol );
-		shortPropertyNode.symbol = propertySymbol;
-		shortPropertyNode.propertyType.isPending = !visitPropertyType( shortPropertyNode );
+        const auto propertySymbol = _currentClassSymbol->symbolTable()->addProperty( shortPropertyNode, _currentClassSymbol );
+        shortPropertyNode.symbol = propertySymbol;
+        shortPropertyNode.propertyType.isPending = !visitPropertyType( shortPropertyNode );
 
-	}
-	else
-	{
-		_errorHandler( shortPropertyNode.name.id, "Property or method redeclared: " + shortPropertyNode.name.name );
-		result = false;
-	}
+    }
+    else
+    {
+        _errorHandler( shortPropertyNode.name.id, "Property or method redeclared: " + shortPropertyNode.name.name );
+        result = false;
+    }
 
-	shortPropertyNode.isPending = shortPropertyNode.propertyType.isPending;
+    shortPropertyNode.isPending = shortPropertyNode.propertyType.isPending;
 
-	return result;
+    return result;
 }
 
 bool Checker::resolveAttributeList( AttributeListNode& astAttributeList )
 {
-	auto result = true;
+    auto result = true;
 
-	for ( auto& attribute : astAttributeList )
-	{
-		if ( attribute.isPending )
-		{
-			result = resolveAttribute( attribute ) || result;
-		}
-	}
+    for ( auto& attribute : astAttributeList )
+    {
+        if ( attribute.isPending )
+        {
+            result = resolveAttribute( attribute ) || result;
+        }
+    }
 
-	return result;
+    return result;
 }
 
 bool Checker::resolveMethod( MethodNode& astMethod )
 {
-	auto result = true;
-	if ( astMethod.type.isPending && !useType( astMethod.type ) )
-	{
-		_errorHandler( astMethod.type.front().id, "Method return type not found: " + astMethod.type );
-		result = false;
-	}
+    auto result = true;
+    if ( astMethod.type.isPending && !useType( astMethod.type ) )
+    {
+        _errorHandler( astMethod.type.front().id, "Method return type not found: " + astMethod.type );
+        result = false;
+    }
 
-	if ( astMethod.arguments.isPending )
-	{
-		enterClassMemberScope( astMethod.symbol );
+    if ( astMethod.arguments.isPending )
+    {
+        enterClassMemberScope( astMethod.symbol );
 
-		result = resolveArgumentList( astMethod.arguments );
+        result = resolveArgumentList( astMethod.arguments );
 
-		exitClassMemberScope();
-	}
+        exitClassMemberScope();
+    }
 
-	return result;
+    return result;
 }
 
 bool Checker::resolveConst( ConstNode& constNode )
@@ -758,9 +758,9 @@ bool Checker::resolveConst( ConstNode& constNode )
 
 bool Checker::resolveParentClass( ClassNode& astClass )
 {
-	const auto result = nullptr != useClass( astClass.parentClass.get(), true ).get();
+    const auto result = nullptr != useClass( astClass.parentClass.get(), true ).get();
 
-	return result;
+    return result;
 }
 
 

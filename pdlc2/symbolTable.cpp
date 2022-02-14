@@ -18,7 +18,7 @@ NamespaceSymbolPtr SymbolTable::addNamespace( std::string const& fullName )
 
 NamespaceSymbolPtr SymbolTable::addNamespace( ast::NamespaceNode const& astNode )
 {
-	auto result( addNamespace( joinIdentifier( astNode.name ) ) );
+    auto result( addNamespace( joinIdentifier( astNode.name ) ) );
     return result;
 }
 
@@ -26,7 +26,7 @@ ClassSymbolPtr SymbolTable::addClass( ast::ClassNode const& astNode, NamespaceSy
 {
     //std::string fullClassName = parent->name() + "." + astNode.name.name;
 
-	auto const& className = astNode.name.name;
+    auto const& className = astNode.name.name;
     assert( !classExists( className ) );
 
     ClassSymbolPtr result( new ClassSymbol( className, parent ) );
@@ -42,10 +42,10 @@ ClassSymbolPtr SymbolTable::addUsingClass( ast::UsingNode const& astNode )
 {
     auto parsedClassName = SymbolTable::parseFullClassName( astNode.className );
 
-	auto& fullNamespace = parsedClassName.first;
-	const auto parentNamespace( getNamespace( fullNamespace ) );
+    auto& fullNamespace = parsedClassName.first;
+    const auto parentNamespace( getNamespace( fullNamespace ) );
 
-	auto& className = parsedClassName.second;
+    auto& className = parsedClassName.second;
     assert( !classExists( className ) );
 
     ClassSymbolPtr result( new ClassSymbol( className, parentNamespace ) );
@@ -83,29 +83,29 @@ PropertySymbolPtr SymbolTable::addProperty( ast::PropertyNode const& propertyNod
 
 PropertySymbolPtr SymbolTable::addProperty(ast::ShortPropertyNode const& shortPropertyNode, ClassSymbolPtr parent)
 {
-	PropertySymbolPtr result(new PropertySymbol(shortPropertyNode.name.name, parent));
-	add(result);
-	return result;
+    PropertySymbolPtr result(new PropertySymbol(shortPropertyNode.name.name, parent));
+    add(result);
+    return result;
 }
 
 
 bool SymbolTable::classExists( std::string const& className )
 {
-	const auto result = nullptr != getSymbol<ClassSymbolPtr>( className ).get();
+    const auto result = nullptr != getSymbol<ClassSymbolPtr>( className ).get();
 
     return result;
 }
 
 bool SymbolTable::namespaceExists( std::string const& fullName )
 {
-	const auto result = nullptr != getSymbol<NamespaceSymbolPtr>( fullName ).get();
+    const auto result = nullptr != getSymbol<NamespaceSymbolPtr>( fullName ).get();
 
     return result;
 }
 
 NamespaceSymbolPtr SymbolTable::getNamespace( std::string const& fullName )
 {
-	auto result = getSymbol<NamespaceSymbolPtr>( fullName );
+    auto result = getSymbol<NamespaceSymbolPtr>( fullName );
 
     if ( !result )
     {

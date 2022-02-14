@@ -25,7 +25,7 @@ Generator::Generator( PdlConfig const& config,  string const& language ) :
     _hasPropertyControl( false )
 
 {
-	_isSameSource = false;
+    _isSameSource = false;
     _accessModifierMap[ AccessModifiers::amInternal ] = ACCESS_MOD_INTERNAL_STR;
     _accessModifierMap[ AccessModifiers::amProtected ] = ACCESS_MOD_PROTECTED_STR;
     _accessModifierMap[ AccessModifiers::amPrivate ] = ACCESS_MOD_PRIVATE_STR;
@@ -41,7 +41,7 @@ Generator::Generator( PdlConfig const& config,  string const& language ) :
 
     readConfig();
 
-	const fs::path outputFolder( _outputFolder );
+    const fs::path outputFolder( _outputFolder );
     if ( !fs::is_directory( _outputFolder ) )
     {
         fs::create_directories(  outputFolder );
@@ -61,7 +61,7 @@ void Generator::readConfig()
     _outputFolder = PdlConfig::to_string( jsonConfig[L"out"].as_string() );
     _inputFolder = PdlConfig::to_string( jsonConfig[L"in"].as_string() );
     _classTemplate = PdlConfig::to_string( jsonConfig[L"classTemplate"].as_string() );
-	const auto configSectionName = PdlConfig::to_wstring( _language );
+    const auto configSectionName = PdlConfig::to_wstring( _language );
 
     if ( jsonConfig[L"file"].has_field( configSectionName ) )
     {
@@ -80,7 +80,7 @@ string Generator::doNamespace( NamespaceNode const& astNamespace )
 {
 
     _mainNamespace = getTargetLanguageNamespace( astNamespace );
-	_pdlMainNamespace = SymbolTable::joinIdentifier( astNamespace.name );
+    _pdlMainNamespace = SymbolTable::joinIdentifier( astNamespace.name );
 
     for(auto const& astClass : astNamespace.classes )
     {
@@ -88,7 +88,7 @@ string Generator::doNamespace( NamespaceNode const& astNamespace )
         _properties.clear();
         _outputHeader = createFileHeader( _mainNamespace + "." + astClass.name.name );
 
-	    const auto classResult = doClass( astNamespace, astClass );
+        const auto classResult = doClass( astNamespace, astClass );
 
         prepareOutputFolder( astNamespace, astClass );
 
@@ -101,22 +101,22 @@ string Generator::doNamespace( NamespaceNode const& astNamespace )
 
 bool Generator::isEnabled( PdlConfig& pdlConfig, string const& language )
 {
-	auto result = true;
-	auto jsonConfig = pdlConfig.getJsonConfig();
+    auto result = true;
+    auto jsonConfig = pdlConfig.getJsonConfig();
 
-	const auto languageSectionKey = PdlConfig::to_wstring( language );
+    const auto languageSectionKey = PdlConfig::to_wstring( language );
 
-	if (jsonConfig[L"file"].has_field(languageSectionKey))
-	{
-		auto languageSection = jsonConfig[L"file"][languageSectionKey];
-		result = PdlConfig::as_bool(languageSection, "enabled", true);
-	}
-	return result;
+    if (jsonConfig[L"file"].has_field(languageSectionKey))
+    {
+        auto languageSection = jsonConfig[L"file"][languageSectionKey];
+        result = PdlConfig::as_bool(languageSection, "enabled", true);
+    }
+    return result;
 }
 
 void Generator::prepareOutputFolder( NamespaceNode const& astNamespace, ClassNode const& astClass )
 {
-	const auto outputPath = getFileOutputFolder();
+    const auto outputPath = getFileOutputFolder();
 
     if ( !is_directory( outputPath ) )
     {
@@ -135,7 +135,7 @@ string Generator::doArgumentList( ArgumentList const& astArgumentList )
         argumentVector.push_back(doArgument( argument ) );
     }
 
-	auto result = boost::join( argumentVector, ", " );
+    auto result = boost::join( argumentVector, ", " );
 
     return result;
 }
@@ -166,8 +166,8 @@ string Generator::doAttributes( AttributeListNode const& astAttributeList )
 
     for(auto const& attribute : astAttributeList )
     {
-	    const string params = boost::apply_visitor( _attrParamsVisitor, attribute.params );
-	    const auto attrInfo = processAttributeName( attribute.name );
+        const string params = boost::apply_visitor( _attrParamsVisitor, attribute.params );
+        const auto attrInfo = processAttributeName( attribute.name );
         if ( params == "" )
         {
             
@@ -185,25 +185,25 @@ string Generator::doAttributes( AttributeListNode const& astAttributeList )
         }
     }
 
-	auto result = boost::join( attributeVector, _attributeSeparator );
+    auto result = boost::join( attributeVector, _attributeSeparator );
 
     return result;
 }
 
-string Generator::visitAttrRequiredParams( AttrRequiredParams const& astAttrRequireParams )
+string Generator::visitAttrRequiredParams( AttrRequiredParams const& astAttrRequiredParams )
 {
     std::vector<string> paramVector;
-    for(auto const& param : astAttrRequireParams )
+    for(auto const& param : astAttrRequiredParams )
     {
         paramVector.push_back( boost::apply_visitor( _literalVisitor, param ) );
     }
-	auto result = boost::join( paramVector, ", " );
+    auto result = boost::join( paramVector, ", " );
     return result;
 }
 
 string Generator::visitAttrRequiredAndOptionals( AttrRequiredAndOptionals const& astAttrRequiresAndOptionals )
 {
-	auto result = visitAttrRequiredParams( astAttrRequiresAndOptionals.required ) + "," + visitAttrOptionalParams( astAttrRequiresAndOptionals.optionals );
+    auto result = visitAttrRequiredParams( astAttrRequiresAndOptionals.required ) + "," + visitAttrOptionalParams( astAttrRequiresAndOptionals.optionals );
     return result;
 }
 
@@ -214,7 +214,7 @@ string Generator::visitAttrOptionalParams( AttrOptionalParams const& astAttrOpti
     {
         paramVector.push_back( param.name.name + "=" + boost::apply_visitor( _literalVisitor, param.value ) );
     }
-	auto result = boost::join( paramVector, ", " );
+    auto result = boost::join( paramVector, ", " );
     return result;
 }
 
@@ -222,59 +222,59 @@ string Generator::visitAttrOptionalParams( AttrOptionalParams const& astAttrOpti
 void Generator::writeOutputFile(string const& source) const
 {
 //#ifdef _DEBUG
-	std::cout << "Generating file: " << _outputFileName << "\n";
+    std::cout << "Generating file: " << _outputFileName << "\n";
 //#endif
 
-	std::ofstream out( _outputFileName );
-	out << source;
-	out.close();
+    std::ofstream out( _outputFileName );
+    out << source;
+    out.close();
 }
 
 bool Generator::outputClass( string const& classSource, string const& fullClassName )
 {
-	const auto result = true;
+    const auto result = true;
 
-	if ( !fs::exists( _outputFileName ) )
-	{
-		writeOutputFile(classSource);
-	}
-	else if ( !_isSameSource )
-	{
-		std::ifstream file( _outputFileName );
-
-		const string originalClassSource( (std::istreambuf_iterator<char>(file)),
-			std::istreambuf_iterator<char>());
-		file.close();
-
-		_isSameSource = originalClassSource == classSource;
-
-		if ( !_isSameSource)
-		{
-			try
-			{
-				fs::remove(_outputFileName);
-			}
-			catch (boost::filesystem::filesystem_error const & e)
-			{
-				std::cerr << "exception: " << e.what() << "\n";
-			}
-			writeOutputFile( classSource );
-		}
-		else
-		{
-			
-#ifdef _DEBUG
-			std::cout << "File not modified: " << _outputFileName << "\n";
-#endif			
-		}
+    if ( !fs::exists( _outputFileName ) )
+    {
+        writeOutputFile(classSource);
     }
-	else
-	{
+    else if ( !_isSameSource )
+    {
+        std::ifstream file( _outputFileName );
+
+        const string originalClassSource( (std::istreambuf_iterator<char>(file)),
+            std::istreambuf_iterator<char>());
+        file.close();
+
+        _isSameSource = originalClassSource == classSource;
+
+        if ( !_isSameSource)
+        {
+            try
+            {
+                fs::remove(_outputFileName);
+            }
+            catch (boost::filesystem::filesystem_error const & e)
+            {
+                std::cerr << "exception: " << e.what() << "\n";
+            }
+            writeOutputFile( classSource );
+        }
+        else
+        {
+            
+#ifdef _DEBUG
+            std::cout << "File not modified: " << _outputFileName << "\n";
+#endif            
+        }
+    }
+    else
+    {
 
 #ifdef _DEBUG
-		std::cout << "File not modified: " << _outputFileName << "\n";
+        std::cout << "File not modified: " << _outputFileName << "\n";
 #endif
-	}
+    }
 
     return result;
 }
@@ -312,18 +312,18 @@ string Generator::arrayNotationList2Brackets( ArrayNotationList const& arrayNota
 
 string Generator::getPropertyType( PropertyType const& propertyType )
 {
-	auto result = translateType(SymbolTable::joinIdentifier(propertyType.type));
+    auto result = translateType(SymbolTable::joinIdentifier(propertyType.type));
 
     result += arrayNotationList2Brackets(propertyType.arrayNotationList);
 
-	return result;
+    return result;
 
 }
 
 
 string Generator::fieldNameFromPropertyName( string name )
 {
-	auto result = "_" + name;
+    auto result = "_" + name;
     result[ 1 ] = tolower( name[ 0 ] );
     return result;
 }
@@ -340,7 +340,7 @@ string Generator::indexerFieldType( std::string const& fieldType, std::string co
 
 string Generator::translateType( std::string const& pdlType )
 {
-	auto result = pdlType;
+    auto result = pdlType;
     if ( _typesMap.find( pdlType ) != _typesMap.end() )
     {
         result = _typesMap[ pdlType ];
@@ -350,7 +350,7 @@ string Generator::translateType( std::string const& pdlType )
 
 string Generator::getEmptyValueOfType( std::string const& type )
 {
-	auto result = _nullObjectValue;
+    auto result = _nullObjectValue;
     if ( _emptyValueOfType.find( type ) != _emptyValueOfType.end() )
     {
         result = _emptyValueOfType[ type ];
@@ -368,21 +368,21 @@ void Generator::doMembers( MemberList const& astMember )
 
 string Generator::visitProperty( PropertyNode const& astProperty ) 
 {
-	auto result = doProperty( astProperty ); 
+    auto result = doProperty( astProperty ); 
     _properties.push_back( result );
     return result;
 }
 
 string Generator::visitShortProperty(ShortPropertyNode const& shortPropertyNode)
 {
-	auto result = doShortProperty(shortPropertyNode);
-	_properties.push_back(result);
-	return result;
+    auto result = doShortProperty(shortPropertyNode);
+    _properties.push_back(result);
+    return result;
 }
 
 string Generator::visitMethod( MethodNode const& astMethod )  
 {
-	auto result = doMethod( astMethod );
+    auto result = doMethod( astMethod );
     _methods.push_back( result );
     return result;
 }

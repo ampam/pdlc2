@@ -37,7 +37,7 @@ public:
         std::wstring_convert<convert_type, wchar_t> converter;
 
         std::string result = converter.to_bytes( value );
-    	
+        
         return result;
     }
 
@@ -50,16 +50,16 @@ public:
 
     static std::wstring to_wstring( char const* value )
     {
-	    const std::string sValue = value;
-	    auto result = PdlConfig::to_wstring( sValue );
+        const std::string sValue = value;
+        auto result = PdlConfig::to_wstring( sValue );
         return result;
     }
 
     static bool as_bool( web::json::value& value, const char* key, bool defaultValue = false )
     {
-	    auto result = defaultValue;
+        auto result = defaultValue;
 
-	    const auto wsKey = PdlConfig::to_wstring( key );
+        const auto wsKey = PdlConfig::to_wstring( key );
 
         if ( value.has_field( wsKey ) )
         {
@@ -68,30 +68,30 @@ public:
         return result;
     }
 
-	static std::vector<web::json::value> as_array(web::json::value& value, const char* key)
-	{
-		std::vector<web::json::value> result;
+    static std::vector<web::json::value> as_array(web::json::value& value, const char* key)
+    {
+        std::vector<web::json::value> result;
 
-		const auto wsKey = PdlConfig::to_wstring( key );
+        const auto wsKey = PdlConfig::to_wstring( key );
 
-		if (value.has_field( wsKey ) )
-		{
-			auto arrayValue = value[wsKey].as_array();
-			auto iter = arrayValue.begin();
-			while( iter != arrayValue.end() )
-			{
-				result.push_back( *iter );
-				++iter;
-			}
-		}
-		return result;
-	}
+        if (value.has_field( wsKey ) )
+        {
+            auto arrayValue = value[wsKey].as_array();
+            auto iter = arrayValue.begin();
+            while( iter != arrayValue.end() )
+            {
+                result.push_back( *iter );
+                ++iter;
+            }
+        }
+        return result;
+    }
 
     static std::string as_string( web::json::value& value, const char* key )
     {
         std::string result;
 
-	    const auto wsKey = PdlConfig::to_wstring( key );
+        const auto wsKey = PdlConfig::to_wstring( key );
 
         if ( value.has_field( wsKey ) )
         {
@@ -102,9 +102,9 @@ public:
 
     static int as_int( web::json::value& value, const char* key )
     {
-	    auto result = 0;
+        auto result = 0;
 
-	    const auto wsKey = PdlConfig::to_wstring( key );
+        const auto wsKey = PdlConfig::to_wstring( key );
 
         if ( value.has_field( wsKey ) )
         {

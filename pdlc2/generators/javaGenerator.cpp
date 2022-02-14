@@ -132,16 +132,16 @@ string JavaGenerator::visitLiteralString( string const& value )
 
 string JavaGenerator::doSingleProperty( PropertyNode const& propertyNode)
 {
-	const auto type = getPropertyType(propertyNode.propertyType);
-	const auto name = propertyNode.name.name;
-	const auto fieldName = fieldNameFromPropertyName( name );
+    const auto type = getPropertyType(propertyNode.propertyType);
+    const auto name = propertyNode.name.name;
+    const auto fieldName = fieldNameFromPropertyName( name );
 
     string getMethod;
     string setMethod;
 
-	const auto accessModifier = getAccessModifier(propertyNode.accessModifier );
+    const auto accessModifier = getAccessModifier(propertyNode.accessModifier );
 
-	const auto paAccess = propertyNode.access.get();
+    const auto paAccess = propertyNode.access.get();
     if ( paAccess == PropertyAccess::paRead || paAccess == PropertyAccess::paReadWrite )
     {
         getMethod = (boost::format( _formatter.singleGetProperty ) 
@@ -160,9 +160,9 @@ string JavaGenerator::doSingleProperty( PropertyNode const& propertyNode)
             % accessModifier).str();
     }
 
-	const auto propertyAttributes = doAttributes(propertyNode.attributes );
+    const auto propertyAttributes = doAttributes(propertyNode.attributes );
 
-	auto result = 
+    auto result = 
         singleFieldType( type, fieldName ) + "\n\n" +
         propertyAttributes + 
         getMethod + 
@@ -173,21 +173,21 @@ string JavaGenerator::doSingleProperty( PropertyNode const& propertyNode)
 
 string JavaGenerator::doIndexerProperty( PropertyNode const& propertyNode)
 {
-	const auto type = getPropertyType(propertyNode.propertyType);
-	const auto name = propertyNode.name.name;
+    const auto type = getPropertyType(propertyNode.propertyType);
+    const auto name = propertyNode.name.name;
 
-	auto const& argument1 = propertyNode.arguments.front();
-	const auto argument1Name = argument1.name.name;
-	const auto argument1Type = translateType( SymbolTable::joinIdentifier( argument1.type ) );
+    auto const& argument1 = propertyNode.arguments.front();
+    const auto argument1Name = argument1.name.name;
+    const auto argument1Type = translateType( SymbolTable::joinIdentifier( argument1.type ) );
 
-	const auto fieldName = fieldNameFromPropertyName( name );
+    const auto fieldName = fieldNameFromPropertyName( name );
 
     string getMethod;
     string setMethod;
 
-	const auto accessModifier = getAccessModifier(propertyNode.accessModifier );
+    const auto accessModifier = getAccessModifier(propertyNode.accessModifier );
 
-	const auto paAccess = propertyNode.access.get();
+    const auto paAccess = propertyNode.access.get();
     if ( paAccess == PropertyAccess::paRead || paAccess == PropertyAccess::paReadWrite )
     {
         getMethod = (boost::format( _formatter.indexerGetProperty ) 
@@ -210,8 +210,8 @@ string JavaGenerator::doIndexerProperty( PropertyNode const& propertyNode)
             % accessModifier ).str();
     }
 
-	const auto propertyAttributes = doAttributes(propertyNode.attributes );
-	auto result = 
+    const auto propertyAttributes = doAttributes(propertyNode.attributes );
+    auto result = 
         indexerFieldType( type, fieldName, argument1Type ) + "\n\n" +
         propertyAttributes + 
         getMethod +

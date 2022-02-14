@@ -17,15 +17,15 @@
 #include "generators/jsGenerator.h"
 #include "generators/javaGenerator.h"
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
+    pam::pdl::config::PdlConfig config(argc, argv);
 
-    pam::pdl::config::PdlConfig config( argc, argv );
-
-    if ( !config.isValid() )
+    if (!config.isValid())
     {
         std::cerr << "Invalid arguments" << std::endl;
-        std::cerr << "pdlc <inputfile> <template-folder> <class-template> <output-folder> [<pdl.config.json file>]" << std::endl;
+        std::cerr << "pdlc <inputfile> <template-folder> <class-template> <output-folder> [<pdl.config.json file>]" <<
+            std::endl;
 #ifdef _DEBUG
     std::cin.ignore();
 #endif
@@ -33,11 +33,11 @@ int main(int argc, char **argv)
         return 1;
     }
 
-	auto fileName = config.getInputFileName();
+    auto fileName = config.getInputFileName();
 
-    std::ifstream in( fileName, std::ios_base::in );
+    std::ifstream in(fileName, std::ios_base::in);
 
-    if ( !in )
+    if (!in)
     {
         std::cerr << "Error: Could not open input file: " << fileName << std::endl;
 #ifdef _DEBUG
@@ -47,7 +47,7 @@ int main(int argc, char **argv)
         return 1;
     }
 
-	std::cout << "Compiling " << fileName << std::endl;
+    std::cout << "Compiling " << fileName << std::endl;
 
     in.unsetf(std::ios::skipws);
 
@@ -61,81 +61,80 @@ int main(int argc, char **argv)
     typedef std::string::const_iterator IteratorType;
 
     IteratorType iter = sourceCode.begin();
-	const IteratorType end = sourceCode.end();
-    pam::pdl::ErrorHandler<IteratorType> errorHandler( fileName.c_str(), iter, end );
+    const IteratorType end = sourceCode.end();
+    pam::pdl::ErrorHandler<IteratorType> errorHandler(fileName.c_str(), iter, end);
 
-    pam::pdl::PdlGrammar<IteratorType> grammar( errorHandler );
+    pam::pdl::PdlGrammar<IteratorType> grammar(errorHandler);
     pam::pdl::ast::NamespaceNode ast;
-	const pam::pdl::skipper<IteratorType> skipper;
+    const pam::pdl::skipper<IteratorType> skipper;
 
-	const auto success = phrase_parse( iter, end, grammar, skipper, ast );
+    const auto success = phrase_parse(iter, end, grammar, skipper, ast);
 
-	auto exitCode = 0;
+    auto exitCode = 0;
 
-    if ( success && iter == end )
+    if (success && iter == end)
     {
 #ifdef _DEBUG
         std::cout << "Parsing succeeded!\n";
 #endif
-	    auto isOk = false;
+        auto isOk = false;
 
-        pam::pdl::codechecker::Checker checker( errorHandler );
-        if ( checker.visitNamespace( ast ) )
+        pam::pdl::codechecker::Checker checker(errorHandler);
+        if (checker.visitNamespace(ast))
         {
             isOk = true;
-            if ( ast.isPending )
+            if (ast.isPending)
             {
-                isOk = checker.resolveNamespace( ast );
+                isOk = checker.resolveNamespace(ast);
             }
 
-            if ( isOk )
+            if (isOk)
             {
-
-				if (pam::pdl::codegen::Generator::isEnabled(config, "csharp"))
-				{
+                if (pam::pdl::codegen::Generator::isEnabled(config, "csharp"))
+                {
 #ifdef _DEBUG
-					std::cout << "Generating C# Classes...\n";
+                    std::cout << "Generating C# Classes...\n";
 #endif
-					pam::pdl::codegen::CSharpGenerator csGenerator(config);
-					csGenerator.doNamespace(ast);
-				}
+                    pam::pdl::codegen::CSharpGenerator csGenerator(config);
+                    csGenerator.doNamespace(ast);
+                }
 
-				if (pam::pdl::codegen::Generator::isEnabled(config, "as3"))
-				{
+                if (pam::pdl::codegen::Generator::isEnabled(config, "as3"))
+                {
 #ifdef _DEBUG
-					std::cout << "Generating ActionScript Classes...\n";
+                std::cout << "Generating ActionScript Classes...\n";
 #endif
-					pam::pdl::codegen::As3Generator as3Generator(config);
-					as3Generator.doNamespace(ast);
-				}
-                
+                    pam::pdl::codegen::As3Generator as3Generator(config);
+                    as3Generator.doNamespace(ast);
+                }
+
                 //C/C++
                 /*
                 std::cout << "Generating C/C++ Classes...\n";
                 pam::pdl::codegen::CppGenerator cppGenerator( config );
                 cppGenerator.doNamespace( ast );
                 */
-                
+
                 //PHP
 #ifdef _DEBUG
                 std::cout << "Generating PHP Classes...\n";
 #endif
-				if ( pam::pdl::codegen::Generator::isEnabled( config, "php"))
-				{
-					pam::pdl::codegen::PhpGenerator phpGenerator(config);
-					phpGenerator.doNamespace(ast);
-				}
-                
+                if (pam::pdl::codegen::Generator::isEnabled(config, "php"))
+                {
+                    pam::pdl::codegen::PhpGenerator phpGenerator(config);
+                    phpGenerator.doNamespace(ast);
+                }
+
 
                 //Javascript
 #ifdef _DEBUG
                 std::cout << "Generating Javascript Classes...\n";
 #endif
-				if (pam::pdl::codegen::Generator::isEnabled(config, "js"))
-				{
-					pam::pdl::codegen::JsGenerator jsGenerator(config);
-					jsGenerator.doNamespace(ast);
-				}
+                if (pam::pdl::codegen::Generator::isEnabled(config, "js"))
+                {
+                    pam::pdl::codegen::JsGenerator jsGenerator(config);
+                    jsGenerator.doNamespace(ast);
+                }
 
                 //Java
                 //std::cout << "Generating Java Classes...\n";
@@ -146,22 +145,20 @@ int main(int argc, char **argv)
                 std::cout << "Done!\n";
 #endif
             }
-            
         }
 
-        if ( !isOk )
+        if (!isOk)
         {
             std::cerr << "Error(s) found!\n";
-			exitCode = 1;
+            exitCode = 1;
         }
-
     }
     else
     {
         std::cerr << "Parsing failed\n";
         exitCode = 1;
     }
-	//std::cin.ignore();
+    //std::cin.ignore();
 #ifdef _DEBUG
     std::cin.ignore();
 #endif
@@ -184,4 +181,3 @@ int main(int argc, char **argv)
     }
 
 */
-

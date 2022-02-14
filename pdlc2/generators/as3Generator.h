@@ -17,7 +17,7 @@ class As3Generator : public Generator
 {
 public:
     As3Generator( pam::pdl::config::PdlConfig const& config );
-	bool isInMainNamespace( std::string const& namespaceString ) const;
+    bool isInMainNamespace( std::string const& namespaceString ) const;
 
 
 protected:
@@ -29,7 +29,7 @@ protected:
 
     virtual std::string doConst( ast::ConstNode const& constNode ) override;
     virtual std::string doMethod( pam::pdl::ast::MethodNode const& astNode ) override;
-    virtual std::string doProperty( pam::pdl::ast::PropertyNode const& astNode ) override;
+    virtual std::string doProperty( ast::PropertyNode const& astProperty) override;
     virtual std::string doShortProperty( pam::pdl::ast::ShortPropertyNode const& shortPropertyNode ) override;
 
     virtual std::string visitLiteralString( std::string const& value ) override;
@@ -124,8 +124,8 @@ protected:
     std::string doSingleProperty( pam::pdl::ast::PropertyNode const& astNode );
     std::string doSingleProperty( pam::pdl::ast::ShortPropertyNode const& astNode );
 
-	virtual std::string getPropertyType( ast::PropertyType const& propertyType ) override;
-	std::string doIndexerProperty( pam::pdl::ast::PropertyNode const& astNode );
+    virtual std::string getPropertyType( ast::PropertyType const& propertyType ) override;
+    std::string doIndexerProperty( pam::pdl::ast::PropertyNode const& astNode );
 
     std::string internalGenerateMethod(
         std::string const& accessModifier,
